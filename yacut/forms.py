@@ -2,6 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import SubmitField, URLField
 from wtforms.validators import DataRequired, Length, Optional
 
+
 class URLMapForm(FlaskForm):
     original_link = URLField(
         'Оригинальная ссылка',

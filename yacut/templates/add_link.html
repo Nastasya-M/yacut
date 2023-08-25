@@ -21,8 +21,8 @@
                     {% if form.original_link.errors %}
                     {% for error in form.original_link.errors %}
                         <span style="color: red">{{ error }}</span>
-                     {% endfor %}
-                     {% endif %}
+                    {% endfor %}
+                    {% endif %}
                   </p>
                 </div>
                 <div>
@@ -33,9 +33,8 @@
                         <span style="color:red">{{ error }}</span>
                     {% endfor %}
                     {% endif %}
-                </p>
+                  </p>
                 </div>
-
                 {{ form.submit(class="btn btn-primary", value="Создать")}}
               </div>
             </form>
@@ -44,23 +43,24 @@
           </div>
         </div>
       </div>
-
       <div class="container">
         <div class="row ">
           <div class="col-sm">
           </div>
           <div class="col-sm">
-            <p class="text-center">
-            <h5 class="text-center">
-                {% with messages = get_flashed_messages() %}
-                  {% if messages %}
-                    {% for message in messages %}
-                      {{ message }}
-                    {% endfor %}
-                  {% endif %}
-                {% endwith %}
-            </h5>
-            </p>
+            {% with messages = get_flashed_messages() %}
+              {% if messages %}
+                  {% for message in messages %}
+                    {{ message }}
+                  {% endfor %}
+              {% endif %}                
+              {% if short %}
+                <h5 class='text-center'>Ваша короткая ссылка готова:</h5>
+                  <p class="text-center">
+                    <a href="{{ url_for('redirect_url_view', short=short, _external=True) }}"> {{ url_for('redirect_url_view', short=short, _external=True) }}</a>
+                  </p>
+              {% endif %}
+              {% endwith %}
           </div>
           <div class="col-sm">
           </div>
@@ -69,4 +69,4 @@
 
     </section>
   </main>
-  {% endblock %}
+  {% endblock content %}
