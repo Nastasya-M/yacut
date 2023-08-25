@@ -13,9 +13,9 @@ class URLMap(db.Model):
 
     def to_dict(self):
         return dict(
-            url = self.original,
-            short_link = BASE_URL + self.short,)
-    
+            url=self.original,
+            short_link=BASE_URL + self.short,)
+
     def from_dict(self, data):
         setattr(self, 'original', data['url'])
         setattr(self, 'short', data['custom_id'])
