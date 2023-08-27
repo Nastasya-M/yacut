@@ -49,24 +49,31 @@
           </div>
           <div class="col-sm">
             {% with messages = get_flashed_messages() %}
-              {% if messages %}
-                  {% for message in messages %}
-                    {{ message }}
-                  {% endfor %}
-              {% endif %}                
-              {% if short %}
-                <h5 class='text-center'>Ваша короткая ссылка готова:</h5>
-                  <p class="text-center">
-                    <a href="{{ url_for('redirect_url_view', short=short, _external=True) }}"> {{ url_for('redirect_url_view', short=short, _external=True) }}</a>
-                  </p>
-              {% endif %}
-              {% endwith %}
+              {% for message in messages %}
+                  {{ message }}
+              {% endfor %}
+            {% endwith %}
           </div>
           <div class="col-sm">
           </div>
         </div>
       </div>
-
-    </section>
-  </main>
-  {% endblock content %}
+ 
+        <div class="container">
+          <div class="row ">
+            <div class="col-sm">
+            </div>
+            <div class="col-sm">
+              <p class="text-center">
+                <h5 class="text-center">Короткая ссылка:</h5>
+                <a href="{{ short_link }}">{{ short_link }}</a>
+              </p>
+            </div>
+            <div class="col-sm">
+            </div>
+          </div>
+        </div>
+  
+      </section>
+    </main>
+  {% endblock %}

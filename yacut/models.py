@@ -1,8 +1,14 @@
+import random
+import re
 from datetime import datetime
 
+from settings import PATTERN, SYMBOLS
 from yacut import db
 
-from . import BASE_URL
+from .error_handlers import ValidationError
+
+NAME_ALREADY_TAKEN = 'Имя "{custom_id}" уже занято.'
+NOT_UNIQUE_NAME = 'Имя {custom_id} уже занято!'
 
 
 class URLMap(db.Model):
@@ -11,11 +17,39 @@ class URLMap(db.Model):
     short = db.Column(db.String(16), unique=True)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
 
-    def to_dict(self):
-        return dict(
-            url=self.original,
-            short_link=BASE_URL + self.short,)
+    @staticmethod
+    def get_short(short):
+        return URLMap.query.filter_by(short=short).first()
 
-    def from_dict(self, data):
-        setattr(self, 'original', data['url'])
-        setattr(self, 'short', data['custom_id'])
+    @staticmethod
+    def get_unique_short_id():
+        short_link = ''.join(random.choices(SYMBOLS, k=6))
+        if not URLMap.get_short(short_link):
+            return short_link
+
+    @staticmethod
+    def validate_and_create(original, custom_id=None, validate=False):
+        if validate and custom_id or custom_id:
+            if len(custom_id) > 16:
+                raise ValidationError('Указано недопустимое имя для короткой ссылки')
+            if not re.match(PATTERN, custom_id):
+                raise ValidationError('Указано недопустимое имя для короткой ссылки')
+            if URLMap.get_object(custom_id):
+                raise ValidationError(
+                    NAME_ALREADY_TAKEN.format(custom_id=custom_id)
+                    if validate else
+                    NOT_UNIQUE_NAME.format(custom_id=custom_id))
+        if not custom_id:
+            custom_id = URLMap.get_unique_short_id()
+        url = URLMap(original=original, short=custom_id)
+        db.session.add(url)
+        db.session.commit()
+        return url
+
+    @staticmethod
+    def get_object(short_id):
+        return URLMap.query.filter_by(short=short_id).first()
+
+    @staticmethod
+    def get_or_404(short):
+        return URLMap.query.filter_by(short=short).first_or_404()
