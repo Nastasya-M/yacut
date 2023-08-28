@@ -2,7 +2,7 @@ import random
 import re
 from datetime import datetime
 
-from settings import PATTERN, SHORT_LENGTH, SYMBOLS
+from settings import CUSTOM_ID_LENGTH, PATTERN, SHORT_LENGTH, SYMBOLS
 from yacut import db
 
 from .error_handlers import ValidationError
@@ -23,7 +23,7 @@ class URLMap(db.Model):
         return URLMap.query.filter_by(short=short).first()
 
     @staticmethod
-    def get_unique_short_id():
+    def __get_unique_short_id():
         short_link = ''.join(random.choices(SYMBOLS, k=SHORT_LENGTH))
         if not URLMap.get_short(short_link):
             return short_link
@@ -31,7 +31,7 @@ class URLMap(db.Model):
     @staticmethod
     def validate_and_create(original, custom_id=None, validate=False):
         if validate and custom_id or custom_id:
-            if len(custom_id) > 16:
+            if len(custom_id) > CUSTOM_ID_LENGTH:
                 raise ValidationError(INVALID_NAME)
             if not re.match(PATTERN, custom_id):
                 raise ValidationError(INVALID_NAME)
@@ -41,7 +41,7 @@ class URLMap(db.Model):
                     if validate
                     else NOT_UNIQUE_NAME.format(custom_id=custom_id))
         if not custom_id:
-            custom_id = URLMap.get_unique_short_id()
+            custom_id = URLMap.__get_unique_short_id()
         url = URLMap(original=original, short=custom_id)
         db.session.add(url)
         db.session.commit()

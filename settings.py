@@ -12,3 +12,4 @@ class Config(object):
 PATTERN = r'^[a-zA-Z0-9]{1,16}$'
 SYMBOLS = ascii_letters + digits
 SHORT_LENGTH = 6
+CUSTOM_ID_LENGTH = 16
